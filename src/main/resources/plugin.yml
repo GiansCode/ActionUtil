@@ -1,0 +1,8 @@
+name: ActionUtil
+version: 1.0
+author: Mas281
+
+depend: [PlaceholderAPI]
+
+api-version: 1.13
+main: io.samdev.actionutil.ActionUtil
