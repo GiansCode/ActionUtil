@@ -12,9 +12,6 @@ import io.samdev.actionutil.util.UtilArray;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import sh.okx.timeapi.api.TimeAPI;
 
@@ -27,7 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ActionUtil extends JavaPlugin implements Listener
+public class ActionUtil extends JavaPlugin
 {
     private static final Map<String, ActionData> actionDatas = new HashMap<>();
     private static final Map<Class<?>, Translator<?>> translators = new HashMap<>();
@@ -39,24 +36,8 @@ public class ActionUtil extends JavaPlugin implements Listener
     {
         instance = this;
 
-        Bukkit.getPluginManager().registerEvents(this, this);
-
         registerTranslators();
         registerActionClasses();
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event)
-    {
-        Bukkit.getScheduler().runTaskLater(this, () ->
-        {
-            executeActions(event.getPlayer(),
-                "[MESSAGE] &2Hello, this is a message",
-                "[BROADCAST] &aHello, this is a broadcast",
-                "[DELAY=5s] [ACTIONBARMESSAGE] &cHello World",
-                "[DELAY=10s] [SOUND] ENTITY_GENERIC_EXPLODE;3.0;1.0"
-            );
-        }, 200L);
     }
 
     private static final Pattern pattern = Pattern.compile("(?<delay>\\[DELAY=(?<delayValue>\\d+[a-z])?])? ?\\[(?<action>.*?)] ?(?<arguments>.*)", Pattern.CASE_INSENSITIVE);
@@ -212,7 +193,7 @@ public class ActionUtil extends JavaPlugin implements Listener
         }
     }
 
-    public static void registerActionClass(String key, Class<?> actionClass, Class<?>... parameterTypes)
+    public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
     {
         try
         {
