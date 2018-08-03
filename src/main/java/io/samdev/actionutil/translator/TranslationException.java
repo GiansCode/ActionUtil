@@ -1,4 +1,4 @@
-package io.samdev.actionutil.translators;
+package io.samdev.actionutil.translator;
 
 public class TranslationException extends RuntimeException
 {

@@ -1,6 +1,5 @@
-package io.samdev.actionutil.actions;
+package io.samdev.actionutil.action;
 
-import io.samdev.actionutil.Action;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;

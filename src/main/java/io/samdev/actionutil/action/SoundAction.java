@@ -1,6 +1,5 @@
-package io.samdev.actionutil.actions;
+package io.samdev.actionutil.action;
 
-import io.samdev.actionutil.Action;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 

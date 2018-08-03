@@ -1,4 +1,4 @@
-package io.samdev.actionutil.translators;
+package io.samdev.actionutil.translator;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

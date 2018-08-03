@@ -1,4 +1,4 @@
-package io.samdev.actionutil.translators;
+package io.samdev.actionutil.translator;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;

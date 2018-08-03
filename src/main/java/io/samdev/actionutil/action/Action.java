@@ -1,4 +1,4 @@
-package io.samdev.actionutil;
+package io.samdev.actionutil.action;
 
 /**
  * Marker interface for actions
