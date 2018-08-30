@@ -19,23 +19,36 @@ import java.util.List;
 
 public class ActionUtil extends JavaPlugin
 {
+    private static ActionUtil instance;
+
     @Override
     public void onEnable()
     {
+        instance = this;
+        executor = new ActionExecutor(this);
+
         registerTranslators();
         registerActionClasses();
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        Bukkit.getPluginManager().registerEvents(new TestCommand(), this);
+    }
+
+    private ActionExecutor executor;
+
+    public ActionExecutor getExecutor()
+    {
+        return executor;
     }
 
     public static void executeActions(Player player, String... actions)
     {
-        executeActions(player, Arrays.asList(actions));
+        instance.getExecutor().executeActions(player, Arrays.asList(actions));
     }
 
     public static void executeActions(Player player, List<String> actions)
     {
-        ActionExecutor.executeActions(player, actions);
+        instance.getExecutor().executeActions(player, actions);
     }
 
     private void registerTranslators()
@@ -81,11 +94,11 @@ public class ActionUtil extends JavaPlugin
 
     public static void registerTranslator(Translator<?> translator, Class<?>... classes)
     {
-        ActionExecutor.registerTranslator(translator, classes);
+        instance.getExecutor().registerTranslator(translator, classes);
     }
 
     public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
     {
-        ActionExecutor.registerActionClass(key, actionClass, parameterTypes);
+        instance.getExecutor().registerActionClass(key, actionClass, parameterTypes);
     }
 }

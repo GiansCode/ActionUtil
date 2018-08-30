@@ -6,7 +6,6 @@ import io.samdev.actionutil.translator.TranslationException;
 import io.samdev.actionutil.translator.Translator;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import sh.okx.timeapi.api.TimeAPI;
 
 import java.lang.reflect.Method;
@@ -20,21 +19,28 @@ import java.util.regex.Pattern;
 
 class ActionExecutor
 {
-    private static final Map<String, ActionData> actionDatas = new HashMap<>();
-    private static final Map<Class<?>, Translator<?>> translators = new HashMap<>();
+    private final ActionUtil plugin;
 
-    private static final ActionUtil plugin = JavaPlugin.getPlugin(ActionUtil.class);
-    private static final Logger logger = plugin.getLogger();
+    ActionExecutor(ActionUtil plugin)
+    {
+        this.plugin = plugin;
+        this.logger = plugin.getLogger();
+    }
 
-    private static final Pattern actionPattern = Pattern.compile("(.*) ?\\[(?<action>[A-Z]+?)] ?(?<arguments>.+)", Pattern.CASE_INSENSITIVE);
-    private static Matcher actionMatcher;
+    private final Logger logger;
 
-    static void executeActions(Player player, List<String> actions)
+    private final Map<String, ActionData> actionDatas = new HashMap<>();
+    private final Map<Class<?>, Translator<?>> translators = new HashMap<>();
+
+    private final Pattern actionPattern = Pattern.compile("(.*) ?\\[(?<action>[A-Z]+?)] ?(?<arguments>.+)", Pattern.CASE_INSENSITIVE);
+    private Matcher actionMatcher;
+
+    void executeActions(Player player, List<String> actions)
     {
         actions.forEach(action -> handleAction(player, action));
     }
 
-    private static void handleAction(Player player, String input)
+    private void handleAction(Player player, String input)
     {
         actionMatcher = actionMatcher == null ? actionPattern.matcher(input) : actionMatcher.reset(input);
 
@@ -73,10 +79,10 @@ class ActionExecutor
         }
     }
 
-    private static final Pattern chancePattern = Pattern.compile("\\[CHANCE=(?<chanceValue>\\d+)]", Pattern.CASE_INSENSITIVE);
-    private static Matcher chanceMatcher;
+    private final Pattern chancePattern = Pattern.compile("\\[CHANCE=(?<chanceValue>\\d+)]", Pattern.CASE_INSENSITIVE);
+    private Matcher chanceMatcher;
 
-    private static boolean shouldExecuteChance(String action)
+    private boolean shouldExecuteChance(String action)
     {
         chanceMatcher = chanceMatcher == null ? chancePattern.matcher(action) : chanceMatcher.reset(action);
 
@@ -91,10 +97,10 @@ class ActionExecutor
         return random <= chance;
     }
 
-    private static final Pattern delayPattern = Pattern.compile("\\[DELAY=(?<delayValue>\\d+[a-z])]", Pattern.CASE_INSENSITIVE);
-    private static Matcher delayMatcher;
+    private final Pattern delayPattern = Pattern.compile("\\[DELAY=(?<delayValue>\\d+[a-z])]", Pattern.CASE_INSENSITIVE);
+    private Matcher delayMatcher;
 
-    private static long getDelay(String action)
+    private long getDelay(String action)
     {
         delayMatcher = delayMatcher == null ? delayPattern.matcher(action) : delayMatcher.reset(action);
 
@@ -113,7 +119,6 @@ class ActionExecutor
         try
         {
             TimeAPI time = new TimeAPI(delay);
-
             return (long) time.getSeconds() * 20;
         }
         catch (IllegalArgumentException ex)
@@ -123,7 +128,7 @@ class ActionExecutor
         }
     }
 
-    private static Object[] getTranslatedArgs(Player player, String[] inputs, Class<?>[] parameterTypes)
+    private Object[] getTranslatedArgs(Player player, String[] inputs, Class<?>[] parameterTypes)
     {
         if (inputs.length != parameterTypes.length)
         {
@@ -163,7 +168,7 @@ class ActionExecutor
         return arguments;
     }
 
-    static void registerTranslator(Translator<?> translator, Class<?>... classes)
+    void registerTranslator(Translator<?> translator, Class<?>... classes)
     {
         for (Class<?> clazz : classes)
         {
@@ -171,7 +176,7 @@ class ActionExecutor
         }
     }
 
-    static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
+    void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
     {
         try
         {

@@ -6,7 +6,7 @@
 
     <groupId>me.itsmas</groupId>
     <artifactId>actionutil</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -34,28 +34,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- CraftBukkit -->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- PlaceholderAPI -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.9.1</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- TimeAPI -->
-        <dependency>
-            <groupId>sh.okx</groupId>
-            <artifactId>timeapi</artifactId>
-            <version>1.1</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
