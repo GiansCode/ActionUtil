@@ -57,7 +57,7 @@ class ActionExecutor
         }
 
         String inputArguments = actionMatcher.group("arguments");
-        String[] argSplit = inputArguments.split(";");
+        String[] argSplit = inputArguments.split(";", -1);
 
         Object[] arguments = getTranslatedArgs(player, argSplit, data.getParameterTypes());
 
@@ -73,14 +73,14 @@ class ActionExecutor
         }
     }
 
-    private static final Pattern chancePattern = Pattern.compile(".*\\[CHANCE=(?<chanceValue>\\d+)].*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern chancePattern = Pattern.compile("\\[CHANCE=(?<chanceValue>\\d+)]", Pattern.CASE_INSENSITIVE);
     private static Matcher chanceMatcher;
 
     private static boolean shouldExecuteChance(String action)
     {
         chanceMatcher = chanceMatcher == null ? chancePattern.matcher(action) : chanceMatcher.reset(action);
 
-        if (!chanceMatcher.matches())
+        if (!chanceMatcher.find())
         {
             return true;
         }
@@ -91,14 +91,14 @@ class ActionExecutor
         return random <= chance;
     }
 
-    private static final Pattern delayPattern = Pattern.compile(".*\\[DELAY=(?<delayValue>\\d+[a-z])].*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern delayPattern = Pattern.compile("\\[DELAY=(?<delayValue>\\d+[a-z])]", Pattern.CASE_INSENSITIVE);
     private static Matcher delayMatcher;
 
     private static long getDelay(String action)
     {
         delayMatcher = delayMatcher == null ? delayPattern.matcher(action) : delayMatcher.reset(action);
 
-        if (!delayMatcher.matches())
+        if (!delayMatcher.find())
         {
             return 0L;
         }
@@ -135,6 +135,12 @@ class ActionExecutor
         for (int i = 0; i < inputs.length; i++)
         {
             String input = inputs[i];
+
+            if (input.equals(""))
+            {
+                arguments[i] = null;
+                continue;
+            }
 
             Translator<?> translator = translators.get(parameterTypes[i]);
 

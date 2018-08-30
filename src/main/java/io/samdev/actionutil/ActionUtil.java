@@ -7,8 +7,10 @@ import io.samdev.actionutil.translator.IntTranslator;
 import io.samdev.actionutil.translator.SoundTranslator;
 import io.samdev.actionutil.translator.StringTranslator;
 import io.samdev.actionutil.translator.Translator;
+import io.samdev.actionutil.translator.WorldTranslator;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,6 +48,7 @@ public class ActionUtil extends JavaPlugin
 
         // Bukkit Types
         registerTranslator(new SoundTranslator(), Sound.class);
+        registerTranslator(new WorldTranslator(), World.class);
     }
 
     private void registerActionClasses()
@@ -72,6 +75,8 @@ public class ActionUtil extends JavaPlugin
         registerActionClass("TITLEBROADCAST", TitleBroadcastAction.class, String.class, String.class, int.class, int.class, int.class);
 
         registerActionClass("BUNGEE", BungeeAction.class, String.class);
+
+        registerActionClass("TELEPORT", TeleportAction.class, World.class, Double.class, Double.class, Double.class, Float.class, Float.class);
     }
 
     public static void registerTranslator(Translator<?> translator, Class<?>... classes)
