@@ -31,7 +31,6 @@ public class ActionUtil extends JavaPlugin
         registerActionClasses();
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        Bukkit.getPluginManager().registerEvents(new TestCommand(), this);
     }
 
     private ActionExecutor executor;
