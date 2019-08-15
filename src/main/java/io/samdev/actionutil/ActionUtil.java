@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ActionUtil extends JavaPlugin {
-    private ActionUtil instance;
+    private static ActionUtil instance;
 
     public ActionUtil() {
         setup();
@@ -21,7 +21,6 @@ public class ActionUtil extends JavaPlugin {
     @Override
     public void onEnable() {
         setup();
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     private void setup() {
@@ -30,6 +29,8 @@ public class ActionUtil extends JavaPlugin {
 
         registerTranslators();
         registerActionClasses();
+
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     private ActionExecutor executor;
@@ -38,11 +39,11 @@ public class ActionUtil extends JavaPlugin {
         return executor;
     }
 
-    public void executeActions(Player player, String... actions) {
+    public static void executeActions(Player player, String... actions) {
         instance.getExecutor().executeActions(player, Arrays.asList(actions));
     }
 
-    public void executeActions(Player player, List<String> actions) {
+    public static void executeActions(Player player, List<String> actions) {
         instance.getExecutor().executeActions(player, actions);
     }
 
@@ -85,11 +86,11 @@ public class ActionUtil extends JavaPlugin {
         registerActionClass("TELEPORT", TeleportAction.class, World.class, Double.class, Double.class, Double.class, Float.class, Float.class);
     }
 
-    public void registerTranslator(Translator<?> translator, Class<?>... classes) {
+    public static void registerTranslator(Translator<?> translator, Class<?>... classes) {
         instance.getExecutor().registerTranslator(translator, classes);
     }
 
-    public void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes) {
+    public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes) {
         instance.getExecutor().registerActionClass(key, actionClass, parameterTypes);
     }
 }
