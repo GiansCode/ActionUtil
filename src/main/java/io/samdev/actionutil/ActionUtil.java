@@ -1,13 +1,7 @@
 package io.samdev.actionutil;
 
 import io.samdev.actionutil.action.*;
-import io.samdev.actionutil.translator.BooleanTranslator;
-import io.samdev.actionutil.translator.DecimalTranslator;
-import io.samdev.actionutil.translator.IntTranslator;
-import io.samdev.actionutil.translator.SoundTranslator;
-import io.samdev.actionutil.translator.StringTranslator;
-import io.samdev.actionutil.translator.Translator;
-import io.samdev.actionutil.translator.WorldTranslator;
+import io.samdev.actionutil.translator.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -17,41 +11,42 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Arrays;
 import java.util.List;
 
-public class ActionUtil extends JavaPlugin
-{
+public class ActionUtil extends JavaPlugin {
     private static ActionUtil instance;
 
+    public ActionUtil() {
+        setup();
+    }
+
     @Override
-    public void onEnable()
-    {
+    public void onEnable() {
+        setup();
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+    }
+
+    private void setup() {
         instance = this;
         executor = new ActionExecutor(this);
 
         registerTranslators();
         registerActionClasses();
-
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     private ActionExecutor executor;
 
-    public ActionExecutor getExecutor()
-    {
+    public ActionExecutor getExecutor() {
         return executor;
     }
 
-    public static void executeActions(Player player, String... actions)
-    {
+    public static void executeActions(Player player, String... actions) {
         instance.getExecutor().executeActions(player, Arrays.asList(actions));
     }
 
-    public static void executeActions(Player player, List<String> actions)
-    {
+    public static void executeActions(Player player, List<String> actions) {
         instance.getExecutor().executeActions(player, actions);
     }
 
-    private void registerTranslators()
-    {
+    private void registerTranslators() {
         // Java Types
         registerTranslator(new StringTranslator(), String.class);
         registerTranslator(new BooleanTranslator(), boolean.class);
@@ -63,8 +58,7 @@ public class ActionUtil extends JavaPlugin
         registerTranslator(new WorldTranslator(), World.class);
     }
 
-    private void registerActionClasses()
-    {
+    private void registerActionClasses() {
         registerActionClass("MESSAGE", MessageAction.class, String.class);
         registerActionClass("BROADCAST", BroadcastAction.class, String.class);
 
@@ -91,13 +85,11 @@ public class ActionUtil extends JavaPlugin
         registerActionClass("TELEPORT", TeleportAction.class, World.class, Double.class, Double.class, Double.class, Float.class, Float.class);
     }
 
-    public static void registerTranslator(Translator<?> translator, Class<?>... classes)
-    {
+    public static void registerTranslator(Translator<?> translator, Class<?>... classes) {
         instance.getExecutor().registerTranslator(translator, classes);
     }
 
-    public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
-    {
+    public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes) {
         instance.getExecutor().registerActionClass(key, actionClass, parameterTypes);
     }
 }
