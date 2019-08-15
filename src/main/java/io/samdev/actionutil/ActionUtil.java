@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ActionUtil extends JavaPlugin {
-    private static ActionUtil instance;
+    private ActionUtil instance;
 
     public ActionUtil() {
         setup();
@@ -38,11 +38,11 @@ public class ActionUtil extends JavaPlugin {
         return executor;
     }
 
-    public static void executeActions(Player player, String... actions) {
+    public void executeActions(Player player, String... actions) {
         instance.getExecutor().executeActions(player, Arrays.asList(actions));
     }
 
-    public static void executeActions(Player player, List<String> actions) {
+    public void executeActions(Player player, List<String> actions) {
         instance.getExecutor().executeActions(player, actions);
     }
 
@@ -85,11 +85,11 @@ public class ActionUtil extends JavaPlugin {
         registerActionClass("TELEPORT", TeleportAction.class, World.class, Double.class, Double.class, Double.class, Float.class, Float.class);
     }
 
-    public static void registerTranslator(Translator<?> translator, Class<?>... classes) {
+    public void registerTranslator(Translator<?> translator, Class<?>... classes) {
         instance.getExecutor().registerTranslator(translator, classes);
     }
 
-    public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes) {
+    public void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes) {
         instance.getExecutor().registerActionClass(key, actionClass, parameterTypes);
     }
 }
