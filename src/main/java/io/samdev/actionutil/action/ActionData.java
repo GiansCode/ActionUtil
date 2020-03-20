@@ -2,6 +2,7 @@ package io.samdev.actionutil.action;
 
 import io.samdev.actionutil.util.UtilArray;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -39,7 +40,7 @@ public class ActionData
     public void execute(Player player, Object[] parameters)
     {
         parameters = UtilArray.prepend(parameters, player);
-
+        
         try
         {
             getExecutionMethod().invoke(null, parameters);

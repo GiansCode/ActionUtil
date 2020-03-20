@@ -4,11 +4,14 @@ import io.samdev.actionutil.action.Action;
 import io.samdev.actionutil.action.ActionData;
 import io.samdev.actionutil.translator.TranslationException;
 import io.samdev.actionutil.translator.Translator;
+import io.samdev.actionutil.util.UtilArray;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import sh.okx.timeapi.api.TimeAPI;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +22,12 @@ import java.util.regex.Pattern;
 
 class ActionExecutor
 {
-    private final ActionUtil plugin;
+    private final Plugin plugin;
 
-    ActionExecutor(ActionUtil plugin)
+    ActionExecutor(Plugin plugin)
     {
         this.plugin = plugin;
-        this.logger = plugin.getLogger();
+        logger = plugin.getLogger();
     }
 
     private final Logger logger;
@@ -66,7 +69,7 @@ class ActionExecutor
         String[] argSplit = inputArguments.split(";", -1);
 
         Object[] arguments = getTranslatedArgs(player, argSplit, data.getParameterTypes());
-
+        
         long delay = getDelay(input);
 
         if (delay == 0L)
@@ -75,7 +78,8 @@ class ActionExecutor
         }
         else
         {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> data.execute(player, arguments), delay);
+            Object[] finalArguments = arguments;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> data.execute(player, finalArguments), delay);
         }
     }
 
@@ -135,8 +139,9 @@ class ActionExecutor
             throw new IllegalStateException(String.format("entered arguments size does not match (given %d, expected %d)", inputs.length, parameterTypes.length));
         }
 
-        Object[] arguments = new Object[parameterTypes.length];
-
+        Object[] arguments = new Object[parameterTypes.length + 1];
+        arguments[0] = plugin;
+        
         for (int i = 0; i < inputs.length; i++)
         {
             String input = inputs[i];
@@ -156,7 +161,7 @@ class ActionExecutor
 
             try
             {
-                arguments[i] = translator.translate(player, input);
+                arguments[i + 1] = translator.translate(player, input);
             }
             catch (TranslationException ex)
             {
@@ -195,10 +200,11 @@ class ActionExecutor
      */
     private static Class<?>[] prependPlayerType(Class<?>[] array)
     {
-        Class<?>[] newArray = new Class<?>[array.length + 1];
+        Class<?>[] newArray = new Class<?>[array.length + 2];
 
         newArray[0] = Player.class;
-        System.arraycopy(array, 0, newArray, 1, array.length);
+        newArray[1] = Plugin.class;
+        System.arraycopy(array, 0, newArray, 2, array.length);
 
         return newArray;
     }

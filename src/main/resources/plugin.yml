@@ -1,7 +1,0 @@
-name: ActionUtil
-version: ${project.version}
-author: Mas281
-
-softdepend: [PlaceholderAPI]
-main: io.samdev.actionutil.ActionUtil
-api-version: 1.14

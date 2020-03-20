@@ -180,6 +180,8 @@ All string arguments are automatically coloured using the `&` character, and put
 
 ## Developer Integration
 
+### Add the maven dependency
+
 ```xml
 <repositories>
   <repository>
@@ -197,6 +199,26 @@ All string arguments are automatically coloured using the `&` character, and put
 </dependency>
 ```
 
+### Register in the onEnable of the Plugin
+
+```java
+private ActionUtil actionUtil;
+
+@Override
+public void onEnable() {
+    actionUtil = ActionUtil.init(this);
+}
+```
+
+### Execute an action
+```java
+// Player, Actions
+ActionUtil#executeActions(Player, String...)
+
+ActionUtil#executeActions(Player, List<String>)
+```
+
+
 ### Registering an Action
 
 Declare a class that implements the `io.samdev.actionutil.action.Action` marker interface. 
@@ -205,7 +227,7 @@ The class must declare a static method named `execute`, where the first argument
 
 Once your class is created, call `ActionUtil.registerActionClass()` with the class, the action name, and the argument types. For example:
 ```java
-ActionUtil.registerActionClass(MyAction.class, "MYACTION", String.class, int.class);
+ActionUtil#registerActionClass(MyAction.class, "MYACTION", String.class, int.class);
 ```
 
 The usage of the method in this way allows multiple actions to be registered to a single class.

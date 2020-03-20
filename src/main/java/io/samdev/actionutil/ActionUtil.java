@@ -12,42 +12,47 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ActionUtil extends JavaPlugin
+public class ActionUtil
 {
-    private static ActionUtil instance;
-
-    @Override
-    public void onEnable()
+    
+    private final Plugin plugin;
+    private final ActionExecutor executor;
+    
+    private ActionUtil(Plugin plugin) 
     {
-        instance = this;
-        executor = new ActionExecutor(this);
-
+        this.plugin = plugin;
+        executor = new ActionExecutor(plugin);
+        
         registerTranslators();
         registerActionClasses();
-
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        
+        Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
     }
-
-    private ActionExecutor executor;
-
+    
+    public static ActionUtil init(Plugin plugin)
+    {
+        return new ActionUtil(plugin);
+    }
+    
     public ActionExecutor getExecutor()
     {
         return executor;
     }
 
-    public static void executeActions(Player player, String... actions)
+    public void executeActions(Player player, String... actions)
     {
-        instance.getExecutor().executeActions(player, Arrays.asList(actions));
+        executor.executeActions(player, Arrays.asList(actions));
     }
 
-    public static void executeActions(Player player, List<String> actions)
+    public void executeActions(Player player, List<String> actions)
     {
-        instance.getExecutor().executeActions(player, actions);
+        executor.executeActions(player, actions);
     }
 
     private void registerTranslators()
@@ -91,13 +96,13 @@ public class ActionUtil extends JavaPlugin
         registerActionClass("TELEPORT", TeleportAction.class, World.class, Double.class, Double.class, Double.class, Float.class, Float.class);
     }
 
-    public static void registerTranslator(Translator<?> translator, Class<?>... classes)
+    public void registerTranslator(Translator<?> translator, Class<?>... classes)
     {
-        instance.getExecutor().registerTranslator(translator, classes);
+        executor.registerTranslator(translator, classes);
     }
 
-    public static void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
+    public void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
     {
-        instance.getExecutor().registerActionClass(key, actionClass, parameterTypes);
+        executor.registerActionClass(key, actionClass, parameterTypes);
     }
 }
