@@ -248,3 +248,7 @@ If you wish to create your own translator for a custom type, make a call to `Act
 
 The only method needed to be fulfilled by the Translator interface is `T translate(Player, String) throws TranslationException`. As hinted by the method declaration, an `io.samdev.actionutil.translator.TranslationException` should be thrown in the case of a user entering an invalid input.
  
+## Credits
+
+* [Mas281](https://github.com/Mas281) - Initial development, and project structure
+* [QuickGlare](https://github.com/QuickGlare) - Transition to an API
