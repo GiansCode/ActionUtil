@@ -180,7 +180,22 @@ All string arguments are automatically coloured using the `&` character, and put
 
 ## Developer Integration
 
-TODO
+```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+```
+
+```xml
+<dependency>
+  <groupId>com.github.GiansCode</groupId>
+  <artifactId>ActionUtil</artifactId>
+  <version>Tag</version>
+</dependency>
+```
 
 ### Registering an Action
 
