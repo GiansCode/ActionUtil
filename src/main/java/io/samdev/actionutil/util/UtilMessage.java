@@ -1,17 +1,19 @@
 package io.samdev.actionutil.util;
 
+import me.clip.placeholderapi.libs.kyori.adventure.text.Component;
+import me.clip.placeholderapi.libs.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public final class UtilMessage
-{
-    private UtilMessage() {}
+public final class UtilMessage {
+    private UtilMessage() {
+    }
 
     private final static int CENTER_PX = 154;
     private final static int MAX_PX = 250;
 
-    public static void sendCenteredMessage(Player player, String message)
-    {
+    public static void sendCenteredMessage(Player player, Component component) {
+        String message = LegacyComponentSerializer.legacyAmpersand().serialize(component);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
         int messagePxSize = 0;
@@ -24,42 +26,30 @@ public final class UtilMessage
         String toSendAfter = null;
         String recentColorCode = "";
 
-        for (char c : message.toCharArray())
-        {
-            if (c == '§')
-            {
+        for (char c : message.toCharArray()) {
+            if (c == '§') {
                 previousCode = true;
                 continue;
-            }
-            else if (previousCode)
-            {
+            } else if (previousCode) {
                 previousCode = false;
                 recentColorCode = "§" + c;
 
-                if (c == 'l' || c == 'L')
-                {
+                if (c == 'l' || c == 'L') {
                     isBold = true;
                     continue;
-                }
-                else
-                {
+                } else {
                     isBold = false;
                 }
-            }
-            else if (c == ' ')
-            {
+            } else if (c == ' ') {
                 lastSpaceIndex = charIndex;
-            }
-            else
-            {
+            } else {
                 DefaultFontInfo dfi = DefaultFontInfo.getDefaultFontInfo(c);
 
                 messagePxSize += isBold ? dfi.getBoldLength() : dfi.getLength();
                 messagePxSize++;
             }
 
-            if (messagePxSize >= MAX_PX)
-            {
+            if (messagePxSize >= MAX_PX) {
                 toSendAfter = recentColorCode + message.substring(lastSpaceIndex + 1, message.length());
                 message = message.substring(0, lastSpaceIndex + 1);
 
@@ -75,17 +65,15 @@ public final class UtilMessage
         int compensated = 0;
 
         StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate)
-        {
+        while (compensated < toCompensate) {
             sb.append(" ");
             compensated += spaceLength;
         }
 
-        player.sendMessage(sb.toString() + message);
+        player.sendMessage(sb + message);
 
-        if (toSendAfter != null)
-        {
-            sendCenteredMessage(player, toSendAfter);
+        if (toSendAfter != null) {
+            sendCenteredMessage(player, LegacyComponentSerializer.legacyAmpersand().deserialize(toSendAfter));
         }
     }
 }

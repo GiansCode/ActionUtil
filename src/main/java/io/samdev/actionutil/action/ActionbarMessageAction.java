@@ -6,10 +6,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
 
-public class ActionbarMessageAction implements Action
-{
-    public static void execute(Player player, Plugin plugin, String msg)
-    {
+public class ActionbarMessageAction implements Action {
+    public static void execute(Player player, Plugin plugin, String msg) {
         UtilPlayer.sendActionbar(Collections.singletonList(player), msg);
     }
 }

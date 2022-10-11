@@ -1,11 +1,10 @@
 package io.samdev.actionutil.util;
 
-public final class UtilArray
-{
-    private UtilArray() {}
+public final class UtilArray {
+    private UtilArray() {
+    }
 
-    public static Object[] prepend(Object[] array, Object value)
-    {
+    public static Object[] prepend(Object[] array, Object value) {
         Object[] newArray = new Object[array.length + 1];
 
         newArray[0] = value;

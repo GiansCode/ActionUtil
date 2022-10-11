@@ -5,12 +5,10 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class SoundBroadcastAction implements Action
-{
-    public static void execute(Player player, Plugin plugin, Sound sound, double volume, double pitch)
-    {
+public class SoundBroadcastAction implements Action {
+    public static void execute(Player player, Plugin plugin, Sound sound, double volume, double pitch) {
         Bukkit.getOnlinePlayers().forEach(other ->
-            other.playSound(other.getLocation(), sound, (float) volume, (float) pitch)
+                other.playSound(other.getLocation(), sound, (float) volume, (float) pitch)
         );
     }
 }
