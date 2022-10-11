@@ -1,62 +1,49 @@
 package io.samdev.actionutil;
 
 import io.samdev.actionutil.action.*;
-import io.samdev.actionutil.translator.BooleanTranslator;
-import io.samdev.actionutil.translator.DecimalTranslator;
-import io.samdev.actionutil.translator.IntTranslator;
-import io.samdev.actionutil.translator.SoundTranslator;
-import io.samdev.actionutil.translator.StringTranslator;
-import io.samdev.actionutil.translator.Translator;
-import io.samdev.actionutil.translator.WorldTranslator;
+import io.samdev.actionutil.translator.*;
+import me.clip.placeholderapi.libs.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ActionUtil
-{
-    
+public class ActionUtil {
+
     private final Plugin plugin;
     private final ActionExecutor executor;
-    
-    private ActionUtil(Plugin plugin) 
-    {
+
+    private ActionUtil(Plugin plugin) {
         this.plugin = plugin;
         executor = new ActionExecutor(plugin);
-        
+
         registerTranslators();
         registerActionClasses();
-        
+
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
     }
-    
-    public static ActionUtil init(Plugin plugin)
-    {
+
+    public static ActionUtil init(Plugin plugin) {
         return new ActionUtil(plugin);
     }
-    
-    public ActionExecutor getExecutor()
-    {
+
+    public ActionExecutor getExecutor() {
         return executor;
     }
 
-    public void executeActions(Player player, String... actions)
-    {
+    public void executeActions(Player player, String... actions) {
         executor.executeActions(player, Arrays.asList(actions));
     }
 
-    public void executeActions(Player player, List<String> actions)
-    {
+    public void executeActions(Player player, List<String> actions) {
         executor.executeActions(player, actions);
     }
 
-    private void registerTranslators()
-    {
+    private void registerTranslators() {
         // Java Types
         registerTranslator(new StringTranslator(), String.class);
         registerTranslator(new BooleanTranslator(), boolean.class);
@@ -66,15 +53,17 @@ public class ActionUtil
         // Bukkit Types
         registerTranslator(new SoundTranslator(), Sound.class);
         registerTranslator(new WorldTranslator(), World.class);
+
+        // Adventure Types
+        registerTranslator(new ComponentTranslator(), Component.class);
     }
 
-    private void registerActionClasses()
-    {
-        registerActionClass("MESSAGE", MessageAction.class, String.class);
-        registerActionClass("BROADCAST", BroadcastAction.class, String.class);
+    private void registerActionClasses() {
+        registerActionClass("MESSAGE", MessageAction.class, Component.class);
+        registerActionClass("BROADCAST", BroadcastAction.class, Component.class);
 
-        registerActionClass("CENTERMESSAGE", CenterMessageAction.class, String.class);
-        registerActionClass("CENTERBROADCAST", CenterBroadcastAction.class, String.class);
+        registerActionClass("CENTERMESSAGE", CenterMessageAction.class, Component.class);
+        registerActionClass("CENTERBROADCAST", CenterBroadcastAction.class, Component.class);
 
         registerActionClass("JSONMESSAGE", JsonMessageAction.class, String.class);
         registerActionClass("JSONBROADCAST", JsonBroadcastAction.class, String.class);
@@ -96,13 +85,12 @@ public class ActionUtil
         registerActionClass("TELEPORT", TeleportAction.class, World.class, Double.class, Double.class, Double.class, Float.class, Float.class);
     }
 
-    public void registerTranslator(Translator<?> translator, Class<?>... classes)
-    {
+    public void registerTranslator(Translator<?> translator, Class<?>... classes) {
         executor.registerTranslator(translator, classes);
     }
 
-    public void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes)
-    {
+    public void registerActionClass(String key, Class<? extends Action> actionClass, Class<?>... parameterTypes) {
         executor.registerActionClass(key, actionClass, parameterTypes);
     }
+
 }

@@ -10,16 +10,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import static io.samdev.actionutil.util.Reflection.getBukkitClass;
-import static io.samdev.actionutil.util.Reflection.getConstructor;
-import static io.samdev.actionutil.util.Reflection.getCraftBukkitClass;
-import static io.samdev.actionutil.util.Reflection.getField;
-import static io.samdev.actionutil.util.Reflection.getMethod;
-import static io.samdev.actionutil.util.Reflection.getNmsClass;
+import static io.samdev.actionutil.util.Reflection.*;
 
-public final class UtilPlayer
-{
-    private UtilPlayer() {}
+public final class UtilPlayer {
+    private UtilPlayer() {
+    }
 
     /* Packet Sending */
     private static Class<?> craftPlayerClass;
@@ -48,10 +43,8 @@ public final class UtilPlayer
     private static Method spigotMethod;
     private static Method sendMessageMethod;
 
-    static
-    {
-        if (Reflection.isV1_8())
-        {
+    static {
+        if (Reflection.isV1_8()) {
             /* Packet Sending */
             craftPlayerClass = getCraftBukkitClass("entity.CraftPlayer");
             getHandleMethod = getMethod(craftPlayerClass, "getHandle");
@@ -79,17 +72,14 @@ public final class UtilPlayer
 
             Class<?> enumTitleActionClass = getNmsClass("PacketPlayOutTitle$EnumTitleAction");
 
-            try
-            {
+            try {
                 titleEnum = getField(enumTitleActionClass, "TITLE").get(null);
                 subtitleEnum = getField(enumTitleActionClass, "SUBTITLE").get(null);
+            } catch (IllegalAccessException ignored) {
             }
-            catch (IllegalAccessException ignored) {}
 
             packetPlayOutTitleConstructor = getConstructor(packetPlayOutTitleClass, enumTitleActionClass, iChatBaseComponentClass, int.class, int.class, int.class);
-        }
-        else
-        {
+        } else {
             /* Bukkit API */
             Class<?> playerClass = getBukkitClass("entity.Player");
             sendTitleMethod = getMethod(playerClass, "sendTitle", String.class, String.class, int.class, int.class, int.class);
@@ -101,114 +91,84 @@ public final class UtilPlayer
         }
     }
 
-    public static void sendActionbar(Collection<? extends Player> players, String msg)
-    {
-        if (Reflection.isV1_8())
-        {
+    public static void sendActionbar(Collection<? extends Player> players, String msg) {
+        if (Reflection.isV1_8()) {
             // Use packets, no native API method
-            try
-            {
+            try {
                 Object iChatBaseComponent = createIChatBaseComponent(msg);
                 Object packetPlayOutChat = packetPlayOutChatConstructor.newInstance(iChatBaseComponent, (byte) 2);
 
                 players.forEach(player -> sendPacket(player, packetPlayOutChat));
-            }
-            catch (ReflectiveOperationException ex)
-            {
+            } catch (ReflectiveOperationException ex) {
                 ex.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
             // Use Player#spigot().sendMessage(ChatMessageType.ACTION_BAR, BaseComponent);
-            try
-            {
+            try {
                 TextComponent component = new TextComponent(msg);
 
-                for (Player player : players)
-                {
+                for (Player player : players) {
                     Object playerSpigot = spigotMethod.invoke(player);
                     sendMessageMethod.invoke(playerSpigot, ChatMessageType.ACTION_BAR, component);
                 }
-            }
-            catch (ReflectiveOperationException ex)
-            {
+            } catch (ReflectiveOperationException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    public static void sendTitle(Collection<? extends Player> players, String title, String subtitle, int fadeIn, int stay, int fadeOut)
-    {
-        if (Reflection.isV1_8())
-        {
+    public static void sendTitle(Collection<? extends Player> players, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        if (Reflection.isV1_8()) {
             // Use packets, no native API method
-            try
-            {
+            try {
                 Object titleBaseComponent = createIChatBaseComponent(title);
                 Object titlePacket = packetPlayOutTitleConstructor.newInstance(titleEnum, titleBaseComponent, fadeIn, stay, fadeOut);
 
                 Object subtitlePacket = null;
 
-                if (subtitle != null)
-                {
+                if (subtitle != null) {
                     Object subtitleBaseComponent = createIChatBaseComponent(subtitle);
                     subtitlePacket = packetPlayOutTitleConstructor.newInstance(subtitleEnum, subtitleBaseComponent, fadeIn, stay, fadeOut);
                 }
 
-                for (Player player : players)
-                {
+                for (Player player : players) {
                     sendPacket(player, titlePacket);
 
-                    if (subtitlePacket != null)
-                    {
+                    if (subtitlePacket != null) {
                         sendPacket(player, subtitlePacket);
                     }
                 }
-            }
-            catch (ReflectiveOperationException ex)
-            {
+            } catch (ReflectiveOperationException ex) {
                 ex.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
             // Use Player#sendTitle(String, String, int, int, int);
-            try
-            {
-                for (Player player : players)
-                {
+            try {
+                for (Player player : players) {
                     sendTitleMethod.invoke(player, title, subtitle, fadeIn, stay, fadeOut);
                 }
-            }
-            catch (ReflectiveOperationException ex)
-            {
+            } catch (ReflectiveOperationException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private static Object createIChatBaseComponent(String text) throws ReflectiveOperationException
-    {
+    private static Object createIChatBaseComponent(String text) throws ReflectiveOperationException {
         return chatSerializerMethod.invoke(null, "{\"text\":\"" + text + "\"}");
     }
 
-    private static void sendPacket(Player player, Object packet)
-    {
-        try
-        {
+    private static void sendPacket(Player player, Object packet) {
+        try {
             Object playerConnection = playerConnectionField.get(
-                entityPlayerClass.cast(
-                    getHandleMethod.invoke(
-                        craftPlayerClass.cast(player)
+                    entityPlayerClass.cast(
+                            getHandleMethod.invoke(
+                                    craftPlayerClass.cast(player)
+                            )
                     )
-                )
             );
 
             sendPacketMethod.invoke(playerConnection, packet);
-        }
-        catch (ReflectiveOperationException ex)
-        {
+        } catch (ReflectiveOperationException ex) {
             ex.printStackTrace();
         }
     }
